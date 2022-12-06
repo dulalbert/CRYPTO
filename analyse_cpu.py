@@ -36,7 +36,11 @@ def generalite_cpu():
     using = psutil.cpu_percent()
     
     freq = psutil.cpu_freq()
-    freq = [freq.current, 100*freq.current/freq.max]
+    if freq.max == 0:
+        freq_max = freq.current
+    else:
+        freq_max = freq.max
+    freq = [freq.current, 100*freq.current/freq_max]
     
     ram_using = psutil.swap_memory().percent
     
