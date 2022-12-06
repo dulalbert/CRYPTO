@@ -80,7 +80,7 @@ def cpu_stat(name, time_sleep = 10):
         
         time.sleep(time_sleep) # attente pour éviter de trop alourdir les données.
 
-if __name__ == "main":
+if __name__ == "__main__":
     name = input("nom du fichier d'enregistrement (sans .csv)")
     delay = int(input("rentrer la durée en seconde de l'attente entre l'écriture des lignes"))
     cpu_stat(name, delay)
