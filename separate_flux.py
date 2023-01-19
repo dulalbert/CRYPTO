@@ -9,6 +9,10 @@ def separate_in_flux(file):
     """
     File est une chaine de caractère
     Le nom du fichier avec l'extension.
+
+    Cette fonction créé un dictionnaire 
+    avec en clé les caractéristiques du flux
+    et en valeur la liste des paquets du flux
     """
     file = open(file)
     data = file.readlines()[1:] #on enlève la première ligne
@@ -26,8 +30,6 @@ def separate_in_flux(file):
         
 def treatment_lign(el):
     """
-    
-
     Parameters
     ----------
     el : une chaine de caractère 
@@ -35,8 +37,7 @@ def treatment_lign(el):
 
     Returns
     -------
-    la ligne traiter et son flux
-
+    la ligne traitéee et son flux
     """
     el = el.split(",")
     num = int(el[0][1:-1])
