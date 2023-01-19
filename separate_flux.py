@@ -9,6 +9,9 @@ def separate_in_flux(file):
     """
     File est une chaine de caractère
     Le nom du fichier avec l'extension.
+
+    Cette fonction créer un dictionnaire avec en clé un tuple avec les caractéristiques du flux
+    et en valeur la liste de ligne de ce flux.
     """
     file = open(file)
     data = file.readlines()[1:] #on enlève la première ligne
