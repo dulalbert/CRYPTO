@@ -995,3 +995,48 @@ KeyboardInterrupt
 2023-02-17 13:03:41,225:INFO:Checking exceptions
 2023-02-17 13:03:41,226:INFO:Preloading libraries
 2023-02-17 13:03:41,226:INFO:Preparing display monitor
+2023-02-17 13:11:31,565:INFO:Initializing predict_model()
+2023-02-17 13:11:31,565:INFO:predict_model(estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=2483, solver='lbfgs', tol=0.0001, verbose=0,
+                   warm_start=False), probability_threshold=None, encoded_labels=False, drift_report=False, raw_score=False, round=4, verbose=True, ml_usecase=MLUsecase.CLASSIFICATION, display=None, drift_kwargs=None)
+2023-02-17 13:11:31,565:INFO:Checking exceptions
+2023-02-17 13:11:31,566:INFO:Preloading libraries
+2023-02-17 13:11:31,566:INFO:Preparing display monitor
+2023-02-17 13:12:08,189:INFO:Initializing predict_model()
+2023-02-17 13:12:08,190:INFO:predict_model(estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=2483, solver='lbfgs', tol=0.0001, verbose=0,
+                   warm_start=False), probability_threshold=None, encoded_labels=False, drift_report=False, raw_score=False, round=4, verbose=True, ml_usecase=MLUsecase.CLASSIFICATION, display=None, drift_kwargs=None)
+2023-02-17 13:12:08,190:INFO:Checking exceptions
+2023-02-17 13:12:08,190:INFO:Preloading libraries
+2023-02-17 13:12:08,190:INFO:Preparing display monitor
+2023-02-17 13:13:38,141:INFO:Initializing predict_model()
+2023-02-17 13:13:38,142:INFO:predict_model(estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=2483, solver='lbfgs', tol=0.0001, verbose=0,
+                   warm_start=False), probability_threshold=None, encoded_labels=False, drift_report=False, raw_score=False, round=4, verbose=True, ml_usecase=MLUsecase.CLASSIFICATION, display=None, drift_kwargs=None)
+2023-02-17 13:13:38,142:INFO:Checking exceptions
+2023-02-17 13:13:38,142:INFO:Preloading libraries
+2023-02-17 13:13:38,142:INFO:Preparing display monitor
+2023-02-17 13:13:48,518:INFO:Initializing predict_model()
+2023-02-17 13:13:48,518:INFO:predict_model(estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=2483, solver='lbfgs', tol=0.0001, verbose=0,
+                   warm_start=False), probability_threshold=None, encoded_labels=False, drift_report=False, raw_score=False, round=4, verbose=True, ml_usecase=MLUsecase.CLASSIFICATION, display=None, drift_kwargs=None)
+2023-02-17 13:13:48,518:INFO:Checking exceptions
+2023-02-17 13:13:48,518:INFO:Preloading libraries
+2023-02-17 13:13:48,518:INFO:Preparing display monitor
+2023-02-17 13:13:59,536:INFO:Initializing predict_model()
+2023-02-17 13:13:59,537:INFO:predict_model(estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=2483, solver='lbfgs', tol=0.0001, verbose=0,
+                   warm_start=False), probability_threshold=None, encoded_labels=False, drift_report=False, raw_score=False, round=4, verbose=True, ml_usecase=MLUsecase.CLASSIFICATION, display=None, drift_kwargs=None)
+2023-02-17 13:13:59,537:INFO:Checking exceptions
+2023-02-17 13:13:59,537:INFO:Preloading libraries
+2023-02-17 13:13:59,537:INFO:Preparing display monitor
