@@ -5,13 +5,13 @@ import pandas as pd
 # On garde que les ports wifi et ethernet
 interfaces = list(filter(lambda s: ('en' or 'eth') in s, netifaces.interfaces()))
 
-# Capturer les packets pendant 20 secondes
-pkt = sniff(iface=interfaces, timeout=20)
+# Capturer 100 packets
+pkt = sniff(iface=interfaces, count=100)
 
 data = []
 for packet in pkt:
     data.append([packet.sniffed_on ,packet.time, packet.src, packet.dst, len(packet)])
 
-sniffed_df = pd.DataFrame(data, columns=['interface','time', 'src', 'dst', 'length'])
+sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
-print (sniffed_df)
+sniffed_df.to_csv('sniffed_df.csv', index = False)
