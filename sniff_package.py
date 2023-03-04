@@ -20,7 +20,8 @@ sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destinat
 
 #Filtrer sur l'interface la plus utilisée
 most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length').iloc[0].name
-sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop("interface", axis = 1)
+sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
+    "interface", axis = 1, inplace = True)
 
 # Add a column outbound
 ip = get_if_addr(most_used_interface)
