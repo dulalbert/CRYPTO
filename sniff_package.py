@@ -1,9 +1,9 @@
+from datetime import datetime
 import netifaces
 from scapy.all import *
 import pandas as pd
-import datetime
 
-window = 4 
+window = 4
 
 # On garde que les ports wifi et ethernet
 interfaces = list(filter(lambda s: ('en' or 'eth') in s, netifaces.interfaces()))
@@ -39,4 +39,4 @@ sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=window).std()
 sniffed_df.drop(['Time', 'Source', 'Destination'], axis = 1, inplace = True)
 sniffed_df.dropna(inplace = True)
 
-sniffed_df.to_csv(f'cryptojacking/network_sniff/scappy-{datetime.datetime.now()}', index = False)
+sniffed_df.to_csv(f'cryptojacking/network_sniff/scappy-{datetime.now()}', index = False)

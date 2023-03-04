@@ -4,61 +4,61 @@ Created on Thu Mar  2 10:12:10 2023
 
 @author: marc2
 """
-
+import time
+from multiprocessing import Process
 import netifaces
 from scapy.all import *
 import pandas as pd
 import analyse_cpu as ac
-from multiprocessing import Process
-import time
+import platform
 
-def traffic_analyse(os, timeout):
+def traffic_analyse():
     """
     Cette fonction d'Albert permet d'analyser le traffic réseau.
-    
-    Elle ne fonctionne pas avec Windows.
-    Elle renvoie un pd.DataFrame
-    
-    (pour windows on devra utiliser get_windows_if_list())
-    
-    os : l'os utiliser ("windows" ou autre)
+
     """
-    if os == "windows":
+    if platform.platform[:7] == "Windows":
         interfaces = netifaces.interfaces()
         interfaces = [el[1:-1] for el in interfaces]
     else:
         # On garde que les ports wifi et ethernet
         interfaces = list(filter(lambda s: ('en' or 'eth') in s, netifaces.interfaces()))
 
-    # Capturer les packets pendant 20 secondes
-    pkt = sniff(iface=interfaces, timeout=timeout)
+
+    # Capturer 200 packets
+    pkt = sniff(iface=interfaces, count=200)
 
     data = []
     for packet in pkt:
-        data.append([packet.sniffed_on ,packet.time, packet.src, packet.dst, len(packet)])
+        if IP in packet : # garder seulement packet IP
+            data.append([packet.sniffed_on ,packet.time, packet[IP].src, packet[IP].dst, len(packet)])
 
-    sniffed_df = pd.DataFrame(data, columns=['interface','time', 'src', 'dst', 'length'])
+    sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
+
+    #Filtrer sur l'interface la plus utilisée
+    most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(1, 'Length').iloc[0].name
+    sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop("interface", axis = 1)
 
     return sniffed_df
 
-def cpu_analyse(timeout, time_sleep):
+def cpu_analyse(timeout : int, time_sleep : int):
     """
-    Cette fonction regarde le cpu tout les time_sleep pendant timeut 
+    Cette fonction regarde le cpu tout les time_sleep pendant timeout
     et renvoie ses observation.
     """
     #écriture periodique.
     time_finish = time.time() + timeout
-    
+
     data_tot = [["ptime_user","ptime_sys",
                 "ptime_none","ptime_other",
                 "pusing","freq_inst",
                 "pfreq","pram"]]
-    
+
     while time.time() < time_finish:
         data = ac.generalite_cpu() #collecte de donnees
         data_tot.append(data)
         time.sleep(time_sleep) # attente pour éviter de trop alourdir les données.
-    
+
     return data_tot
 
 def write_data(name, data):
@@ -71,15 +71,15 @@ def write_data(name, data):
             file.write(str(el) + ",")
         file.write("\n")
     file.close()
-    
-def write_traffic(name, timeout, os):
-    data = traffic_analyse(timeout, os)
+
+def write_traffic(name):
+    data = traffic_analyse()
     write_data(name, data)
 
 def write_cpu(name, timeout, time_sleep):
     data = cpu_analyse(timeout, time_sleep)
     write_data(name, data)
-    
+
 def run(name, os = "windows", time_sleep = 1, timeout = 20):
     """
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
@@ -88,16 +88,12 @@ def run(name, os = "windows", time_sleep = 1, timeout = 20):
     traffic = Process(target = write_traffic, args = [name + "Traffic", os,
                                                       timeout])
     traffic.start()
-    
-    cpu_analyse = Process(target = write_cpu, args = [name + "Cpu", 
+
+    cpu_analyse = Process(target = write_cpu, args = [name + "Cpu",
                                                       timeout, time_sleep])
     cpu_analyse.start()
-    
+
     traffic.join()
     cpu_analyse.join()
-    
+
     print("finished")
-
-
-
-
