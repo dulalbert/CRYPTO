@@ -1,25 +1,25 @@
 from datetime import datetime
-import netifaces
+from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 
 window = 4
 
 # On garde que les ports wifi et ethernet
-interfaces = list(filter(lambda s: ('en' or 'eth') in s, netifaces.interfaces()))
+interfaces = list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 # Capturer 200 packets
 pkt = sniff(iface=interfaces, count=200)
 
 data = []
 for packet in pkt:
-    if IP in packet : # garder seulement packet IP
+    if 'IP' in packet : # garder seulement packet IP
         data.append([packet.sniffed_on ,packet.time, packet[IP].src, packet[IP].dst, len(packet)])
 
 sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
 #Filtrer sur l'interface la plus utilisée
-most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(1, 'Length').iloc[0].name
+most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length').iloc[0].name
 sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop("interface", axis = 1)
 
 # Add a column outbound

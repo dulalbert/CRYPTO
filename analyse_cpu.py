@@ -75,7 +75,7 @@ def cpu_stat(name_file:str, time_sleep = 10):
     while True:
         data = generalite_cpu() #collecte de donnees
 
-        file = open(name + ".csv", "a") #écriture
+        file = open(name + ".csv", "a", encoding = "UTF-8") #écriture
         for el in data:
             file.write(str(el) + ",")
         file.write("\n")

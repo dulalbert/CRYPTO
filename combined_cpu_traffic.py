@@ -6,27 +6,28 @@ Created on Thu Mar  2 10:12:10 2023
 """
 import time
 from multiprocessing import Process
-import netifaces
+from platform import platform
+
+from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 import analyse_cpu as ac
-import platform
+
 
 def traffic_analyse():
     """
     Cette fonction d'Albert permet d'analyser le traffic réseau.
-
+    A tester sur windows
     """
-    if platform.platform[:7] == "Windows":
-        interfaces = netifaces.interfaces()
-        interfaces = [el[1:-1] for el in interfaces]
+    if platform()[:7] == "Windows":
+        inter = [el[1:-1] for el in interfaces()]
     else:
         # On garde que les ports wifi et ethernet
-        interfaces = list(filter(lambda s: ('en' or 'eth') in s, netifaces.interfaces()))
+        inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 
     # Capturer 200 packets
-    pkt = sniff(iface=interfaces, count=200)
+    pkt = sniff(iface=inter, count=200)
 
     data = []
     for packet in pkt:
@@ -36,7 +37,7 @@ def traffic_analyse():
     sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
     #Filtrer sur l'interface la plus utilisée
-    most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(1, 'Length').iloc[0].name
+    most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length').iloc[0].name
     sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop("interface", axis = 1)
 
     return sniffed_df
