@@ -5,7 +5,12 @@ import pandas as pd
 
 WINDOW = 4
 
-# On garde que les ports wifi et ethernet
+# On garde que les ports wifi et ethernet séparé sur windows et mac
+if platform()[:7] == "Windows":
+    inter = [el[1:-1] for el in interfaces()]
+else:
+    inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
+
 interfaces = list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 # Capturer 200 packets
