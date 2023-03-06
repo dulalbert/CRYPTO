@@ -3,7 +3,7 @@ from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 
-window = 4
+WINDOW = 4
 
 # On garde que les ports wifi et ethernet
 interfaces = list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
@@ -13,7 +13,7 @@ pkt = sniff(iface=interfaces, count=200)
 
 data = []
 for packet in pkt:
-    if 'IP' in packet : # garder seulement packet IP
+    if IP in packet : # garder seulement packet IP
         data.append([packet.sniffed_on ,packet.time, packet[IP].src, packet[IP].dst, len(packet)])
 
 sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
@@ -30,14 +30,14 @@ sniffed_df['outbound'] = sniffed_df['Source'].apply(lambda x : x == ip)
 sniffed_df['delta'] = sniffed_df.Time.diff()
 
 # Delta Rolling average + Standard Deviation
-sniffed_df['ra_delta'] = sniffed_df.delta.rolling(window=window).mean()
-sniffed_df['rstd_delta'] = sniffed_df.delta.rolling(window=window).std()
+sniffed_df['ra_delta'] = sniffed_df.delta.rolling(window=WINDOW).mean()
+sniffed_df['rstd_delta'] = sniffed_df.delta.rolling(window=WINDOW).std()
 
 # Delta Rolling average + Standard Deviation
-sniffed_df['ra_lenght'] = sniffed_df.Length.rolling(window=window).mean()
-sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=window).std()
+sniffed_df['ra_lenght'] = sniffed_df.Length.rolling(window=WINDOW).mean()
+sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=WINDOW).std()
 # remove useless columns
 sniffed_df.drop(['Time', 'Source', 'Destination'], axis = 1, inplace = True)
 sniffed_df.dropna(inplace = True)
 
-sniffed_df.to_csv(f'cryptojacking/network_sniff/scappy-{datetime.now()}', index = False)
+sniffed_df.to_csv(f'network_sniff/scappy-{datetime.now()}', index = False)
