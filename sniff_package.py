@@ -1,4 +1,6 @@
-from datetime import datetime
+#for Windows install npcap
+import time
+from platform import platform as pf
 from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
@@ -6,14 +8,14 @@ import pandas as pd
 WINDOW = 4
 
 # On garde que les ports wifi et ethernet séparé sur windows et mac
-if platform()[:7] == "Windows":
+if pf()[:7] == "Windows":
     inter = [el[1:-1] for el in interfaces()]
 else:
     inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 interfaces = list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
-# Capturer 200 packets
+# Capturer 200 packets, pas sur une durée car timeout ne fonctionne pas sur macos
 pkt = sniff(iface=interfaces, count=200)
 
 data = []
@@ -45,4 +47,4 @@ sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=WINDOW).std()
 sniffed_df.drop(['Time', 'Source', 'Destination'], axis = 1, inplace = True)
 sniffed_df.dropna(inplace = True)
 
-sniffed_df.to_csv(f'network_sniff/scappy-{datetime.now()}', index = False)
+sniffed_df.to_csv(f'network_sniff/scappy-{time.strftime("%Y%m%d-%H%M%S")}', index = False)

@@ -5,8 +5,8 @@ Created on Thu Mar  2 10:12:10 2023
 @author: marc2
 """
 import time
-from multiprocessing import Process
-from platform import platform
+from multiprocessing import Process, freeze_support
+from platform import platform as pf
 
 from netifaces import interfaces
 from scapy.all import *
@@ -19,7 +19,7 @@ def traffic_analyse():
     Cette fonction d'Albert permet d'analyser le traffic réseau.
     A tester sur windows
     """
-    if platform()[:7] == "Windows":
+    if pf()[:7] == "Windows":
         inter = [el[1:-1] for el in interfaces()]
     else:
         # On garde que les ports wifi et ethernet
@@ -75,20 +75,18 @@ def write_data(name, data):
     file.close()
 
 def write_traffic(name):
-    data = traffic_analyse()
-    write_data(name, data)
+    traffic_analyse().to_csv(f'{name}.csv')
 
 def write_cpu(name, timeout, time_sleep):
     data = cpu_analyse(timeout, time_sleep)
     write_data(name, data)
 
-def run(name, os = "windows", time_sleep = 1, timeout = 20):
+def run(name : str, time_sleep = 1, timeout = 20):
     """
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
     ne fonctionne pas avec windows
     """
-    traffic = Process(target = write_traffic, args = [name + "Traffic", os,
-                                                      timeout])
+    traffic = Process(target = write_traffic, args = [name + "Traffic"])
     traffic.start()
 
     cpu_analyse = Process(target = write_cpu, args = [name + "Cpu",
@@ -99,3 +97,6 @@ def run(name, os = "windows", time_sleep = 1, timeout = 20):
     cpu_analyse.join()
 
     print("finished")
+if __name__ == '__main__':
+    freeze_support()
+    run('test')

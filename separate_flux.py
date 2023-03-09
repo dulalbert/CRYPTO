@@ -10,7 +10,7 @@ def separate_in_flux(file):
     File est une chaine de caractère
     Le nom du fichier avec l'extension.
 
-    Cette fonction créé un dictionnaire 
+    Cette fonction créé un dictionnaire
     avec en clé les caractéristiques du flux
     et en valeur la liste des paquets du flux
     """
@@ -25,14 +25,14 @@ def separate_in_flux(file):
         else:
             dico_flux[flux] = [lign]
     return dico_flux
-        
-        
-        
+
+
+
 def treatment_lign(el):
     """
     Parameters
     ----------
-    el : une chaine de caractère 
+    el : une chaine de caractère
         contenant les informations d'une ligne de traffic
 
     Returns
@@ -47,7 +47,7 @@ def treatment_lign(el):
     protocol = el[4]
     lenght = int(el[5][1:-1])
     infos = el[6]
-    
+
     lign = (num, time, source, destination, protocol, lenght, infos)
     flux = (source, destination, protocol)
-    return lign, flux 
+    return lign, flux

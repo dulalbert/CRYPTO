@@ -11,25 +11,25 @@ class Sys_cpu_analyse():
         """
         nb_data : le nombre de données sur lequel on fait l'analyse
             par def (20)
-        
+
         time_sleep : le temps entre chaque observation du cpu
             par def (5s)
-        
+
         nb_data_same : le nombre de données identiques a partir duquel
             on considère que c'est suspect.
             par def (5)
-            
+
         same : l'écart qu'on tolère entre deux valeurs identiques.
             par def (0.1)
-            
-        nb_data_max : le nb de données au dessus du seuil 
+
+        nb_data_max : le nb de données au dessus du seuil
             a partir duquel on considère cela suspect
             par def (15)
-            
+
         max_sus : le seuil a partir duquel on considère cela suspect.
             par def (95)
-            
-        sur : si on veut être informe des que l'un des critère est suspect 
+
+        sur : si on veut être informe des que l'un des critère est suspect
             (False) ou si on veut attendre que le deux le soit (True)
             par def True
         """
@@ -41,10 +41,10 @@ class Sys_cpu_analyse():
         self.nb_data_max = nb_data_max
         self.max_sus = max_sus
         self.sur = sur
-        
-        #lancement 
+
+        #lancement
         self.main()
-    
+
     def obtain_data(self):
         """
         Regarde min_data fois l'activité du CPU
@@ -55,10 +55,10 @@ class Sys_cpu_analyse():
 
     def analyse_same(self):
         """
-        Cette fonction regarde les données et 
+        Cette fonction regarde les données et
         determine si il y a une activité suspect
         en regardantles variation d'activité du cpu
-        
+
         renvoie True si suspect.
         """
         i = 0
@@ -72,8 +72,8 @@ class Sys_cpu_analyse():
                 i = 0
                 initial = el
         return False
-        
-    
+
+
     def analyse_intensity(self):
         """
         Cette fonction regarde l'intensité de l'utilisation du cpu
@@ -86,11 +86,11 @@ class Sys_cpu_analyse():
                 if i == self.nb_data_max:
                     return True
         return False
-    
+
     def main(self):
         """
         Le processus d'arrière plan.
-        
+
         S'arrète quand après avoir annoncé qu'il y avait du minage.
         """
         minage = False
@@ -104,17 +104,12 @@ class Sys_cpu_analyse():
             else:
                 if sus_max or sus_same:
                     minage = True
-        
+
         # quand minage l'annoncé.
         msg = "Attention du code de minage tourne sur votre ordinateur"
         title = "Analyse du cpu"
         tkinter.messagebox.showwarning(title=title, message=msg)
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+#launch
+Sys_cpu_analyse()
