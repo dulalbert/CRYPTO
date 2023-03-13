@@ -42,6 +42,7 @@ for name in glob(path.join(getcwd()+"/network_sniff/", "*minage*.csv")):
     mining_DF = pd.concat([_,mining_DF], ignore_index= True)
 #mining_DF.miner = True
 
+# mettre tous les sniffs sans minage dans un DataFrame
 for name in glob(path.join(getcwd()+"/network_sniff/", "*calme*.csv")):
     _ = pd.read_csv(name)
     _.pipe(prepare_sniff_wireshark)
@@ -54,7 +55,7 @@ training_DF[['No.', 'Length']] = training_DF[['No.', 'Length']].astype('int')
 y = training_DF['miner']
 X = training_DF.drop('miner', axis = 1)
 
-fix_params = {'learning_rate': 0.2, 'n_estimators': 100, 'objective': 'binary:logistic', 'max_depth': 5, 'min_child_weight': 2}   #other parameters, fixed for the moment
+fix_params = {'learning_rate': 0.2, 'n_estimators': 100, 'objective': 'binary:logistic', 'max_depth': 5, 'min_child_weight': 2}
 xg = XGBClassifier(**fix_params)
 
 xg.fit(X, y)
