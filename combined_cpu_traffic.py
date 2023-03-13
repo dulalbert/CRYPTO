@@ -13,6 +13,8 @@ from scapy.all import *
 import pandas as pd
 import analyse_cpu as ac
 
+WINDOW = 4
+
 
 def traffic_analyse():
     """
@@ -72,6 +74,28 @@ def write_cpu(name, timeout, time_sleep):
     data = pd.DataFrame(cpu_analyse(timeout, time_sleep))
     data.to_csv(f'{name}.csv')
 
+def prepare_sniffed_df(sniffed_df : pd.DataFrame):
+    """Applique le Feature Engineering choisi
+    Args:
+        sniffed_df (pd.DataFrame): Dataframe provenant de scapy
+
+    Returns:
+        cleaned_sniffed_df: Feature Engineering appliqué
+    """
+    sniffed_df['delta'] = sniffed_df.Time.diff()
+
+    # Delta Rolling average + Standard Deviation
+    sniffed_df['ra_delta'] = sniffed_df.delta.rolling(window=WINDOW).mean()
+    sniffed_df['rstd_delta'] = sniffed_df.delta.rolling(window=WINDOW).std()
+
+    # Delta Rolling average + Standard Deviation
+    sniffed_df['ra_lenght'] = sniffed_df.Length.rolling(window=WINDOW).mean()
+    sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=WINDOW).std()
+    # remove useless columns
+    sniffed_df.drop(['Time', 'Source', 'Destination'], axis = 1, inplace = True)
+    cleaned_sniffed_df = sniffed_df.dropna(inplace = True)
+    return cleaned_sniffed_df
+
 def run(name : str, time_sleep = 1, timeout = 20):
     """
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
@@ -80,16 +104,16 @@ def run(name : str, time_sleep = 1, timeout = 20):
     traffic = Process(target = write_traffic, args = [name + "Traffic"])
     traffic.start()
 
-    cpu_analyse = Process(target = write_cpu, args = [name + "Cpu",
+    enregistrement_cpu = Process(target = write_cpu, args = [name + "Cpu",
                                                       timeout, time_sleep])
-    cpu_analyse.start()
+    enregistrement_cpu.start()
 
     traffic.join()
-    cpu_analyse.join()
+    enregistrement_cpu.join()
 
     print("finished sniffing data")
 
-    
+
 
 if __name__ == '__main__':
     freeze_support()
