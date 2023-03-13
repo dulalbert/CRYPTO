@@ -32,12 +32,14 @@ def traffic_analyse():
     data = []
     for packet in pkt:
         if IP in packet : # garder seulement packet IP
-            data.append([packet.sniffed_on ,packet.time, packet[IP].src, packet[IP].dst, len(packet)])
+            data.append([packet.sniffed_on ,packet.time,
+                          packet[IP].src, packet[IP].dst, len(packet)])
 
     sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
     #Filtrer sur l'interface la plus utilisée
-    most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length').iloc[0].name
+    most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(
+        1, 'Length').iloc[0].name
     sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
         "interface", axis = 1, inplace = True)
 
@@ -63,23 +65,12 @@ def cpu_analyse(timeout : int, time_sleep : int):
 
     return data_tot
 
-def write_data(name, data):
-    """
-    Cette fonction ecrit un csv contenant les données.
-    """
-    file = open(name + ".csv", "w")
-    for lign in data:
-        for el in lign:
-            file.write(str(el) + ",")
-        file.write("\n")
-    file.close()
-
 def write_traffic(name):
     traffic_analyse().to_csv(f'{name}.csv')
 
 def write_cpu(name, timeout, time_sleep):
-    data = cpu_analyse(timeout, time_sleep)
-    write_data(name, data)
+    data = pd.DataFrame(cpu_analyse(timeout, time_sleep))
+    data.to_csv(f'{name}.csv')
 
 def run(name : str, time_sleep = 1, timeout = 20):
     """
@@ -96,7 +87,10 @@ def run(name : str, time_sleep = 1, timeout = 20):
     traffic.join()
     cpu_analyse.join()
 
-    print("finished")
+    print("finished sniffing data")
+
+    
+
 if __name__ == '__main__':
     freeze_support()
     run('test')
