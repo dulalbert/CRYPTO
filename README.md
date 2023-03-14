@@ -1,7 +1,9 @@
 # cryptojacking
 ## Installation
 Testé uniquement sous MacOS 11.7.3
+
 Python version 3.9.15
+
 xgboost = 1.7.3
 
 ## Comment utiliser
@@ -15,7 +17,8 @@ Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le mo
 
 
 ## Roadmap
-- Tester sur Windows
+- Tester sur Linux
+- Vérifier si il faut remettre 0112_minage_traffic_internet_calmee.csv dans le dataset de train ou non.
 - Rajouter des données dans le dataset.
 
 

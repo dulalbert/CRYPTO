@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar  2 10:12:10 2023
-
-@author: marc2
+Fichier à lancer pour l'analyse
 """
 import time
 from multiprocessing import Process, freeze_support
@@ -12,8 +10,8 @@ import pkg_resources
 from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
-import analyse_cpu as ac
 import xgboost as xgb
+import analyse_cpu as ac
 
 pkg_resources.require('xgboost == 1.7.3')
 WINDOW = 4
@@ -31,8 +29,8 @@ def traffic_analyse():
         inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 
-    # Capturer 200 packets
-    pkt = sniff(iface=inter, count=200)
+    # Capturer 600 packets
+    pkt = sniff(iface=inter, count=600)
 
     data = []
     for packet in pkt:
@@ -121,7 +119,8 @@ def run(name : str, time_sleep = 1, timeout = 20):
     bst = xgb.Booster({'nthread': 4})  # init model
     bst.load_model('model.bst')  # load data
     result = pd.DataFrame(bst.predict(dtrain))
-
+    #retirer après test
+    result.sort_values([0]).to_csv('result.csv')
     if [result[result > 0.5].count() > result[result < 0.5].count()][0][0] :
         print("probable attaque de cryptojacking")
 

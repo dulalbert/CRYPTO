@@ -6,8 +6,10 @@ from os import getcwd, path
 from glob import glob
 import pkg_resources
 
+from matplotlib import pyplot # a retirer
+from sklearn.metrics import classification_report, confusion_matrix # a retirer aussi
 import pandas as pd
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier, plot_importance
 pkg_resources.require('xgboost == 1.7.3')
 WINDOW = 4
 
@@ -53,11 +55,18 @@ training_DF = pd.concat([mining_DF,non_mining_DF], ignore_index= True)
 training_DF[['No.', 'Length']] = training_DF[['No.', 'Length']].astype('int')
 
 y = training_DF['miner']
-X = training_DF.drop('miner', axis = 1)
+X = training_DF.drop(['miner', 'No.'], axis = 1)
 
-fix_params = {'learning_rate': 0.2, 'n_estimators': 100, 'objective': 'binary:logistic', 'max_depth': 5, 'min_child_weight': 2}
+fix_params = {'learning_rate': 0.2, 'n_estimators': 100, 'eval_metric': 'aucpr'
+              , 'objective': 'binary:logistic', 'max_depth': 5, 'min_child_weight': 2}
 xg = XGBClassifier(**fix_params)
 
 xg.fit(X, y)
+
+# Feature importance pour le modèle
+plot_importance(xg)
+pyplot.show()
+print(confusion_matrix(y,xg.predict(X)))
+
 xg.save_model('model.bst')
 print('Model trained')
