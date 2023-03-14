@@ -60,3 +60,4 @@ xg = XGBClassifier(**fix_params)
 
 xg.fit(X, y)
 xg.save_model('model.bst')
+print('Model trained')
