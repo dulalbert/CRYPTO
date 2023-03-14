@@ -12,6 +12,7 @@ from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 import analyse_cpu as ac
+import xgboost as xgb
 
 WINDOW = 4
 
@@ -40,11 +41,11 @@ def traffic_analyse():
     sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
     #Filtrer sur l'interface la plus utilisée
-    most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(
+    most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(
         1, 'Length').iloc[0].name
-    sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
-        "interface", axis = 1, inplace = True)
-
+    sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
+        "interface", axis = 1)
+    sniffed_df.pipe(prepare_sniffed_df)
     return sniffed_df
 
 def cpu_analyse(timeout : int, time_sleep : int):
@@ -68,7 +69,7 @@ def cpu_analyse(timeout : int, time_sleep : int):
     return data_tot
 
 def write_traffic(name):
-    traffic_analyse().to_csv(f'{name}.csv')
+    traffic_analyse().to_csv(f'{name}.csv', index = False)
 
 def write_cpu(name, timeout, time_sleep):
     data = pd.DataFrame(cpu_analyse(timeout, time_sleep))
@@ -101,10 +102,10 @@ def run(name : str, time_sleep = 1, timeout = 20):
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
     ne fonctionne pas avec windows
     """
-    traffic = Process(target = write_traffic, args = [name + "Traffic"])
+    traffic = Process(target = write_traffic, args = [name + "_" + "Traffic"])
     traffic.start()
 
-    enregistrement_cpu = Process(target = write_cpu, args = [name + "Cpu",
+    enregistrement_cpu = Process(target = write_cpu, args = [name + "_" + "Cpu",
                                                       timeout, time_sleep])
     enregistrement_cpu.start()
 
@@ -112,6 +113,12 @@ def run(name : str, time_sleep = 1, timeout = 20):
     enregistrement_cpu.join()
 
     print("finished sniffing data")
+    df = pd.read_csv('test_traffic.csv')
+
+    bst = xgb.Booster({'nthread': 4})  # init model
+    bst.load_model('model.bst')  # load data
+
+    
 
 
 
