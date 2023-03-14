@@ -114,13 +114,14 @@ def run(name : str, time_sleep = 1, timeout = 20):
 
     print("finished sniffing data")
     df = pd.read_csv('test_traffic.csv')
+    dtrain = xgb.DMatrix(df)
 
     bst = xgb.Booster({'nthread': 4})  # init model
     bst.load_model('model.bst')  # load data
+    result = pd.DataFrame(bst.predict(dtrain))
 
-    
-
-
+    if [result[result > 0.5].count() > result[result < 0.5].count()][0][0] :
+        print("probable attaque de cryptojacking")
 
 if __name__ == '__main__':
     freeze_support()
