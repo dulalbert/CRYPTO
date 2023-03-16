@@ -117,8 +117,11 @@ def run(name : str, time_sleep = 1, timeout = 20):
     if [result[result > 0.9].count() > result[result < 0.9].count()][0][0] :
         if pf()[:7] != "Windows":
             print("probable attaque de cryptojacking")
-        else :
-            
+        #else :
+            #from win10toast import ToastNotifier
+            #msg = "Attention du code de minage tourne sur votre ordinateur"
+            #notif = ToastNotifier()
+            #notif.show_toast(title='Notification', msg=msg)
 
 if __name__ == '__main__':
     freeze_support()
