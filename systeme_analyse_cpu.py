@@ -1,6 +1,6 @@
 from analyse_cpu import generalite_cpu
 import time
-import tkinter
+from win10toast import ToastNotifier
 
 class Sys_cpu_analyse():
 
@@ -107,8 +107,8 @@ class Sys_cpu_analyse():
         
         # quand minage l'annoncé.
         msg = "Attention du code de minage tourne sur votre ordinateur"
-        title = "Analyse du cpu"
-        tkinter.messagebox.showwarning(title=title, message=msg)
+        notif = ToastNotifier()
+        notif.show_toast(title='Notification', msg=msg)
             
             
             
