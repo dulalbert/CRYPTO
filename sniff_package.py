@@ -1,12 +1,15 @@
-from datetime import datetime
+import time
+#from platform import platform
+import platform as pf
 from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 
 WINDOW = 4
 
+"""
 # On garde que les ports wifi et ethernet séparé sur windows et mac
-if platform()[:7] == "Windows":
+if pf.platform()[:7] == "Windows":
     inter = [el[1:-1] for el in interfaces()]
 else:
     inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
@@ -15,6 +18,8 @@ interfaces = list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
 
 # Capturer 200 packets
 pkt = sniff(iface=interfaces, count=200)
+"""
+pkt = sniff(count=200)
 
 data = []
 for packet in pkt:
@@ -24,13 +29,15 @@ for packet in pkt:
 sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
 
 #Filtrer sur l'interface la plus utilisée
-most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length').iloc[0].name
+"""
+most_used_interface = sniffed_df.groupby(by = 'interface').sum().nlargest(1, 'Length')
 sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
     "interface", axis = 1, inplace = True)
+"""
 
 # Add a column outbound
-ip = get_if_addr(most_used_interface)
-sniffed_df['outbound'] = sniffed_df['Source'].apply(lambda x : x == ip)
+#ip = get_if_addr(most_used_interface)
+#sniffed_df['outbound'] = sniffed_df['Source'].apply(lambda x : x == ip)
 
 sniffed_df['delta'] = sniffed_df.Time.diff()
 
@@ -45,4 +52,6 @@ sniffed_df['rstd_lenght'] = sniffed_df.Length.rolling(window=WINDOW).std()
 sniffed_df.drop(['Time', 'Source', 'Destination'], axis = 1, inplace = True)
 sniffed_df.dropna(inplace = True)
 
-sniffed_df.to_csv(f'network_sniff/scappy-{datetime.now()}', index = False)
+sniffed_df.to_csv(f'scappy-{time.strftime("%Y%m%d-%H%M%S")}.csv', index = False)
+
+print(sniffed_df)
