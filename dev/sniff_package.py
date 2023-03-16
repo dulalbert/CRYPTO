@@ -1,5 +1,6 @@
-    """Le script à lancer pour sniffer le réseau et formater le DataFrame
-    """
+"""
+Le script à lancer pour sniffer le réseau et formater le DataFrame
+"""
 #for Windows install npcap
 import time
 from platform import platform as pf

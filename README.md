@@ -24,11 +24,13 @@ Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le mo
 
 
 ## Roadmap
-- Tester sur Linux
+- Tester sur Linux.
 - Vérifier si il faut remettre 0112_minage_traffic_internet_calmee.csv dans le dataset de train ou non.
 - Rajouter des données dans le dataset.
 
+# Interrogations
 
+Faut-il réentrainer le modèle avec les output du sniff.
 
 ## Authors and acknowledgment
 ### Auteur
