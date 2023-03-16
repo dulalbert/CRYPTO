@@ -6,6 +6,13 @@ Python version 3.9.15
 
 xgboost = 1.7.3
 
+### Dépendances :
+- condas
+- netifaces
+- xgboost = 1.7.3
+- psutil
+- winpcap
+
 ## Comment utiliser
 Lancer le script run.py et attendre le résultat.
 

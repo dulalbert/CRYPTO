@@ -42,7 +42,6 @@ for name in glob(path.join(getcwd()+"/network_sniff/", "*minage*.csv")):
     _ = pd.read_csv(name)
     _.pipe(prepare_sniff_wireshark)
     mining_DF = pd.concat([_,mining_DF], ignore_index= True)
-#mining_DF.miner = True
 
 # mettre tous les sniffs sans minage dans un DataFrame
 for name in glob(path.join(getcwd()+"/network_sniff/", "*calme*.csv")):

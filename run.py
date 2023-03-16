@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Fichier à lancer pour l'analyse
 """
@@ -14,66 +13,9 @@ import xgboost as xgb
 import analyse_cpu as ac
 
 pkg_resources.require('xgboost == 1.7.3')
+
 WINDOW = 4
-
-
-def traffic_analyse():
-    """
-    Cette fonction d'Albert permet d'analyser le traffic réseau.
-    A tester sur windows
-    """
-    if pf()[:7] == "Windows":
-        inter = [el[1:-1] for el in interfaces()]
-    else:
-        # On garde que les ports wifi et ethernet
-        inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
-
-
-    # Capturer 600 packets
-    pkt = sniff(iface=inter, count=600)
-
-    data = []
-    for packet in pkt:
-        if IP in packet : # garder seulement packet IP
-            data.append([packet.sniffed_on ,packet.time,
-                          packet[IP].src, packet[IP].dst, len(packet)])
-
-    sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
-
-    #Filtrer sur l'interface la plus utilisée
-    most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(
-        1, 'Length').iloc[0].name
-    sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
-        "interface", axis = 1)
-    sniffed_df.pipe(prepare_sniffed_df)
-    return sniffed_df
-
-def cpu_analyse(timeout : int, time_sleep : int):
-    """
-    Cette fonction regarde le cpu tout les time_sleep pendant timeout
-    et renvoie ses observation.
-    """
-    #écriture periodique.
-    time_finish = time.time() + timeout
-
-    data_tot = [["ptime_user","ptime_sys",
-                "ptime_none","ptime_other",
-                "pusing","freq_inst",
-                "pfreq","pram"]]
-
-    while time.time() < time_finish:
-        data = ac.generalite_cpu() #collecte de donnees
-        data_tot.append(data)
-        time.sleep(time_sleep) # attente pour éviter de trop alourdir les données.
-
-    return data_tot
-
-def write_traffic(name):
-    traffic_analyse().to_csv(f'{name}.csv', index = False)
-
-def write_cpu(name, timeout, time_sleep):
-    data = pd.DataFrame(cpu_analyse(timeout, time_sleep))
-    data.to_csv(f'{name}.csv')
+COUNT_SNIFF = 600
 
 def prepare_sniffed_df(sniffed_df : pd.DataFrame):
     """Applique le Feature Engineering choisi
@@ -97,6 +39,57 @@ def prepare_sniffed_df(sniffed_df : pd.DataFrame):
     cleaned_sniffed_df = sniffed_df.dropna(inplace = True)
     return cleaned_sniffed_df
 
+def traffic_analyse():
+    """
+    Sniff packet réseau et met dans le bon format pour le XGBoost
+    """
+    if pf()[:7] == "Windows":
+        inter = [el[1:-1] for el in interfaces()]
+        pkt = sniff(count= COUNT_SNIFF)
+    else:
+        # On garde que les ports wifi et ethernet
+        inter= list(filter(lambda s: ('en' or 'eth') in s, interfaces()))
+        # Capturer 200 packets
+        pkt = sniff(iface=inter, count= COUNT_SNIFF)
+
+    data = []
+    for packet in pkt:
+        if IP in packet : # garder seulement packet IP
+            data.append([packet.sniffed_on ,packet.time,
+                          packet[IP].src, packet[IP].dst, len(packet)])
+
+    sniffed_df = pd.DataFrame(data, columns=['interface','Time', 'Source', 'Destination', 'Length'])
+
+    #Filtrer sur l'interface la plus utilisée
+    most_used_interface = sniffed_df.groupby(by = 'interface').sum('Length').nlargest(
+        1, 'Length').iloc[0].name
+    sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
+        "interface", axis = 1)
+    sniffed_df.pipe(prepare_sniffed_df)
+    return sniffed_df
+
+def cpu_analyse(name : str, timeout : int, time_sleep : int):
+    """
+    Cette fonction regarde le cpu tout les time_sleep pendant timeout
+    et renvoie ses observation.
+    """
+    #écriture periodique.
+    time_finish = time.time() + timeout
+
+    data_tot = [["pusing"]]
+
+    while time.time() < time_finish:
+        data = ac.generalite_cpu() #collecte de donnees
+        data_tot.append(data)
+        time.sleep(time_sleep) # attente pour éviter de trop alourdir les données.
+    df_cpu = pd.DataFrame(data_tot)
+    df_cpu.to_csv(f'{name}.csv')
+    return data_tot
+
+def write_traffic(name):
+    traffic_analyse().to_csv(f'{name}.csv', index = False)
+
+
 def run(name : str, time_sleep = 1, timeout = 20):
     """
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
@@ -105,7 +98,7 @@ def run(name : str, time_sleep = 1, timeout = 20):
     traffic = Process(target = write_traffic, args = [name + "_" + "Traffic"])
     traffic.start()
 
-    enregistrement_cpu = Process(target = write_cpu, args = [name + "_" + "Cpu",
+    enregistrement_cpu = Process(target = cpu_analyse, args = [name + "_" + "Cpu",
                                                       timeout, time_sleep])
     enregistrement_cpu.start()
 
@@ -113,7 +106,7 @@ def run(name : str, time_sleep = 1, timeout = 20):
     enregistrement_cpu.join()
 
     print("finished sniffing data")
-    df = pd.read_csv('test_traffic.csv')
+    df = pd.read_csv(f'{name}_traffic.csv')
     dtrain = xgb.DMatrix(df)
 
     bst = xgb.Booster({'nthread': 4})  # init model
@@ -121,8 +114,11 @@ def run(name : str, time_sleep = 1, timeout = 20):
     result = pd.DataFrame(bst.predict(dtrain))
     #retirer après test
     result.sort_values([0]).to_csv('result.csv')
-    if [result[result > 0.5].count() > result[result < 0.5].count()][0][0] :
-        print("probable attaque de cryptojacking")
+    if [result[result > 0.9].count() > result[result < 0.9].count()][0][0] :
+        if pf()[:7] != "Windows":
+            print("probable attaque de cryptojacking")
+        else :
+            
 
 if __name__ == '__main__':
     freeze_support()

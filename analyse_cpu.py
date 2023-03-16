@@ -24,26 +24,8 @@ def generalite_cpu():
         - le pourcentage de la fréquence du cpu utilisé
         - le pourcentage de la mémoire ram utilisé.
     """
-    ptime = psutil.cpu_times_percent()
-    ptime_user = ptime.user
-    ptime_sys = ptime.system
-    ptime_none = ptime.idle
-    ptime_other = 100-(ptime_user + ptime_sys + ptime_none)
-
-    ptime = [ptime_user, ptime_sys, ptime_none, ptime_other]
-
     using = psutil.cpu_percent()
-
-    freq = psutil.cpu_freq()
-    if freq.max == 0:
-        freq_max = freq.current
-    else:
-        freq_max = freq.max
-    freq = [freq.current, 100*freq.current/freq_max]
-
-    ram_using = psutil.swap_memory().percent
-
-    return ptime + [using] + freq + [ram_using]
+    return [using]
 
 
 def cpu_stat(name_file:str, time_sleep = 10):
@@ -68,7 +50,7 @@ def cpu_stat(name_file:str, time_sleep = 10):
     """
     # préparation du fichier
     file = open(name_file + ".csv", "w", encoding= "utf-8")
-    file.write("ptime_user,ptime_sys,ptime_none,ptime_other,pusing,freq_inst,pfreq,pram\n")
+    file.write("pusing\n")
     file.close()
 
     #écriture periodique.
