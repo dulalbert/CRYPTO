@@ -15,13 +15,13 @@ import analyse_cpu as ac
 try:
     from win10toast import ToastNotifier
 except ImportError:
-    # Handle import error if the module is not installed
-    print("Error: 'win10toast' module not found.")
+    # Si win10toast pas importé on ignore
+    pass
 
 pkg_resources.require('xgboost == 1.7.3')
 
 WINDOW = 4
-COUNT_SNIFF = 600
+COUNT_SNIFF = 200
 
 def prepare_sniffed_df(sniffed_df : pd.DataFrame):
     """Applique le Feature Engineering choisi
@@ -45,7 +45,7 @@ def prepare_sniffed_df(sniffed_df : pd.DataFrame):
     cleaned_sniffed_df = sniffed_df.dropna(inplace = True)
     return cleaned_sniffed_df
 
-def traffic_analyse():
+def traffic_analyse(name : str):
     """
     Sniff packet réseau et met dans le bon format pour le XGBoost
     """
@@ -71,8 +71,8 @@ def traffic_analyse():
         1, 'Length').iloc[0].name
     sniffed_df = sniffed_df.where(sniffed_df["interface"] == most_used_interface).drop(
         "interface", axis = 1)
-    sniffed_df.pipe(prepare_sniffed_df)
-    return sniffed_df
+    sniffed_df.to_csv(f'{name}.csv', index = False)
+    return()
 
 def cpu_analyse(name : str, timeout : int, time_sleep : int):
     """
@@ -92,8 +92,6 @@ def cpu_analyse(name : str, timeout : int, time_sleep : int):
     df_cpu.to_csv(f'{name}.csv')
     return data_tot
 
-def write_traffic(name):
-    traffic_analyse().to_csv(f'{name}.csv', index = False)
 
 
 def run(name : str, time_sleep = 1, timeout = 20):
@@ -101,7 +99,7 @@ def run(name : str, time_sleep = 1, timeout = 20):
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
     ne fonctionne pas avec windows
     """
-    traffic = Process(target = write_traffic, args = [name + "_" + "Traffic"])
+    traffic = Process(target = traffic_analyse, args = [name + "_" + "Traffic"])
     traffic.start()
 
     enregistrement_cpu = Process(target = cpu_analyse, args = [name + "_" + "Cpu",
@@ -112,7 +110,7 @@ def run(name : str, time_sleep = 1, timeout = 20):
     enregistrement_cpu.join()
 
     print("finished sniffing data")
-    df = pd.read_csv(f'{name}_traffic.csv')
+    df = pd.read_csv(f'{name}_traffic.csv').pipe(prepare_sniffed_df)
     dtrain = xgb.DMatrix(df)
 
     bst = xgb.Booster({'nthread': 4})  # init model
