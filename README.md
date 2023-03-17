@@ -1,17 +1,11 @@
 # cryptojacking
 ## Installation
-Testé uniquement sous MacOS 11.7.3
 
-Python version 3.9.15
+Installer les dépendances :
 
-xgboost = 1.7.3
-
-### Dépendances :
-- condas
-- netifaces
-- xgboost = 1.7.3
-- psutil
-- winpcap
+```
+pip install -r requirements.txt
+```
 
 ## Comment utiliser
 Lancer le script run.py et attendre le résultat.
@@ -24,13 +18,20 @@ Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le mo
 
 
 ## Roadmap
-- Tester sur Linux.
-- Vérifier si il faut remettre 0112_minage_traffic_internet_calmee.csv dans le dataset de train ou non.
-- Rajouter des données dans le dataset.
+
+- Rajouter des données dans le dataset => voir Interrogations
 
 # Interrogations
 
-Faut-il réentrainer le modèle avec les output du sniff.
+Faut'il réentrainer le modèle avec des inputs de l'utilisateur.
+
+## Avantages :
+- Le modèle s'améliorerait avec le temps donc moins en moins de faux positif.
+
+## Désaventages :
+- Les classes étaient équilibrés au début, est-ce que déséquilibrer les classes ne diminurait pas le résultat du XGBoost.
+- Les hyperparamètres ont été choisis par ggridsearch sur le dataset d'entrainement, faut il refaire un GridSearch à chaque entrainement?
+- Pas eu de cours sur la mise en production de modèle.
 
 ## Authors and acknowledgment
 ### Auteur
