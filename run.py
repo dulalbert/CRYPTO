@@ -12,6 +12,12 @@ import pandas as pd
 import xgboost as xgb
 import analyse_cpu as ac
 
+try:
+    from win10toast import ToastNotifier
+except ImportError:
+    # Handle import error if the module is not installed
+    print("Error: 'win10toast' module not found.")
+
 pkg_resources.require('xgboost == 1.7.3')
 
 WINDOW = 4
@@ -114,14 +120,13 @@ def run(name : str, time_sleep = 1, timeout = 20):
     result = pd.DataFrame(bst.predict(dtrain))
     #retirer après test
     result.sort_values([0]).to_csv('result.csv')
-    if [result[result > 0.9].count() > result[result < 0.9].count()][0][0] :
-        if pf()[:7] != "Windows":
+    if [result[result > 0.5].count() > result[result < 0.5].count()][0][0] :
+        if 'ToastNotifier' in locals():
+            msg = "Attention du code de minage tourne sur votre ordinateur"
+            notif = ToastNotifier()
+            notif.show_toast(title='Notification', msg=msg)
+        else:
             print("probable attaque de cryptojacking")
-        #else :
-            #from win10toast import ToastNotifier
-            #msg = "Attention du code de minage tourne sur votre ordinateur"
-            #notif = ToastNotifier()
-            #notif.show_toast(title='Notification', msg=msg)
 
 if __name__ == '__main__':
     freeze_support()
