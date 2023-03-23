@@ -14,9 +14,18 @@ Installer les dépendances :
 ```
 pip install -r requirements.txt
 ```
+Sur Windows, on peut installer win10toast pour avoir une allerte plus esthétique.
 
 ## Comment utiliser
-Lancer le script run.py et attendre le résultat sans logiciel en arrière plan.
+
+Lancer le script run.py, le script tourne en boucle infinie.
+
+Variable globale pouvant être changées :
+- WINDOW : la fenêtre surlaquelle on effectue les moyennes et écart-types mobiles
+- COUNT_SNIFF : le nombre de paquet sniffés sur lesquels on applique le XGBoost
+- CPU_AVERAGE_TIME : la durée sur laquelle étudie le pourcentage d'utilisation du CPU
+- CPU_ALERT_PERCENT : le pourcentage surprenant d'utilisation du CPU
+- NETWORK_ALERT_PERCENT : on compare le nombre de paquets ayant une probabilité supérieur à ce pourcentage et intférieue après le XGBoost et s'il y a une majorité de paquet ayant une probabilité supérieur, on allerte l'utilisateur.
 
 Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le modèle :
 - Lancer du minage avec XMRig (optionel)
@@ -29,6 +38,8 @@ Le model a été entrainé à partir de donnée snifées par Wireshark
 ## Roadmap
 
 - Rajouter des données dans le dataset => voir Interrogations
+- Essayer de créer un dataset avec plusieurs ordinateurs Windows avec Wireshark à utiliser en mode administrateur.
+- Réecrire analyse_cpu ou le remplacer
 
 # Interrogations
 

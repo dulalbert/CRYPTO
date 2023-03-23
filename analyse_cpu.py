@@ -4,25 +4,15 @@ Created on Thu Dec  1 15:02:39 2022
 
 @author: Marc SERRE
 
-fonction d'analyse du cpu
+fonction d'analyse du cpu, peut être réecrite plus propre
 
-utiliser cpu_stat
 """
 import time
 import psutil
 
 def generalite_cpu():
     """
-    Cette fonction renvoie l'utilisation du cpu de manière général.
-    c'est à dire une liste contenant:
-        - le pourcentage de temps passer par des processus en mode utilisateur
-        - le pourcentage de temps passer par des processus en mode noyau
-        - le pourcentage de temps passer à ne rien faire.
-        - le pourcentage de temps passer à faire autre chose
-        - le pourcentage d'utilisation du cpu
-        - le fréquence instantanée de travail du cpu
-        - le pourcentage de la fréquence du cpu utilisé
-        - le pourcentage de la mémoire ram utilisé.
+    Cette fonction renvoie l'utilisation du cpu en pourcentage.
     """
     using = psutil.cpu_percent()
     return [using]

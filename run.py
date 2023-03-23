@@ -2,18 +2,19 @@
 Fichier à lancer pour l'analyse
 """
 import time
-from multiprocessing import Process, freeze_support
 from platform import platform as pf
 import pkg_resources
+from time import strftime
 
 from netifaces import interfaces
 from scapy.all import *
 import pandas as pd
 import xgboost as xgb
 import analyse_cpu as ac
+from psutil import cpu_percent
 
 try:
-    from win10toast import ToastNotifier
+    from win10toast import ToastNotifier # seulement pour les ordinateurs windwos
 except ImportError:
     # Si win10toast pas importé on ignore
     pass
@@ -22,6 +23,9 @@ pkg_resources.require('xgboost == 1.7.3')
 
 WINDOW = 4
 COUNT_SNIFF = 200
+CPU_AVERAGE_TIME = 30
+CPU_ALERT_PERCENT = 70
+NETWORK_ALERT_PERCENT = 0.5
 
 def prepare_sniffed_df(sniffed_df : pd.DataFrame):
     """Applique le Feature Engineering choisi
@@ -97,36 +101,27 @@ def cpu_analyse(name : str, timeout : int, time_sleep : int):
 def run(name : str, time_sleep = 1, timeout = 20):
     """
     Cette fonction lance l'analyse de paquet et l'analyse du cpu en parallèle.
-    ne fonctionne pas avec windows
+
     """
-    traffic = Process(target = traffic_analyse, args = [name + "_" + "Traffic"])
-    traffic.start()
+    while True :
+        if cpu_percent(CPU_AVERAGE_TIME) > CPU_ALERT_PERCENT :
+            traffic_analyse(name)
+            print("finished sniffing data")
+            df = pd.read_csv(f'{name}.csv')
+            df.pipe(prepare_sniffed_df)
+            dtrain = xgb.DMatrix(df)
 
-    enregistrement_cpu = Process(target = cpu_analyse, args = [name + "_" + "Cpu",
-                                                      timeout, time_sleep])
-    enregistrement_cpu.start()
-
-    traffic.join()
-    enregistrement_cpu.join()
-
-    print("finished sniffing data")
-    df = pd.read_csv(f'{name}_traffic.csv')
-    df.pipe(prepare_sniffed_df)
-    dtrain = xgb.DMatrix(df)
-
-    bst = xgb.Booster({'nthread': 4})  # init model
-    bst.load_model('model.bst')  # load data
-    network_result = pd.DataFrame(bst.predict(dtrain))
-    #retirer après test
-    network_result.sort_values([0]).to_csv('result.csv')
-    if [network_result[network_result > 0.5].count() > network_result[network_result < 0.5].count()][0][0] :
-        if 'ToastNotifier' in locals():
-            msg = "Attention du code de minage tourne sur votre ordinateur"
-            notif = ToastNotifier()
-            notif.show_toast(title='Notification', msg=msg)
-        else:
-            print("probable attaque de cryptojacking")
+            bst = xgb.Booster({'nthread': 4})  # init model
+            bst.load_model('model.bst')  # load data
+            network_result = pd.DataFrame(bst.predict(dtrain))
+            network_result.sort_values([0]).to_csv('result.csv')
+            if [network_result[network_result > NETWORK_ALERT_PERCENT].count() > network_result[network_result < NETWORK_ALERT_PERCENT].count()][0][0] :
+                if 'ToastNotifier' in locals():
+                    msg = "Attention du code de minage tourne sur votre ordinateur"
+                    notif = ToastNotifier()
+                    notif.show_toast(title='Notification', msg=msg)
+                else:
+                    print("probable attaque de cryptojacking")
 
 if __name__ == '__main__':
-    freeze_support()
-    run('test')
+    run(f'network_sniff_{strftime("%Y%m%d-%H%M%S")}')
