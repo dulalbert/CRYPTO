@@ -21,9 +21,10 @@ Lancer le script run.py et attendre le résultat sans logiciel en arrière plan.
 Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le modèle :
 - Lancer du minage avec XMRig (optionel)
 - Lancer le sniff du réseau avec Wireshark
-- Exporter en csv dans le dossier network_sniff avec minage dans le nom si il y a du minage et calme sinon.
+- Exporter en csv dans le dossier network_sniff avec minage dans le nom si il y a du minage et calme sinon
 - Lancer train_xgboost.py
 
+Le model a été entrainé à partir de donnée snifées par Wireshark
 
 ## Roadmap
 
@@ -31,7 +32,7 @@ Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le mo
 
 # Interrogations
 
-Faut'il réentrainer le modèle avec des inputs de l'utilisateur.
+Faut il réentrainer le modèle avec des inputs de l'utilisateur.
 
 ## Avantages :
 - Le modèle s'améliorerait avec le temps donc moins en moins de faux positif.
@@ -40,22 +41,6 @@ Faut'il réentrainer le modèle avec des inputs de l'utilisateur.
 - Les classes étaient équilibrés au début, est-ce que déséquilibrer les classes ne diminurait pas le résultat du XGBoost.
 - Les hyperparamètres ont été choisis par ggridsearch sur le dataset d'entrainement, faut il refaire un GridSearch à chaque entrainement?
 - Pas eu de cours sur la mise en production de modèle.
-
-## Authors and acknowledgment
-### Auteur
-- Albert Dulout
-
-- Marc Serre
-
-- Tianrun Zhang
-
-- Elias Bey
-
-### Remerciement
-
-- Francoise Sailhan
-- Sandrine Vaton
-- Santiago Ruano Rincón
 
 ## Génération du dataset
 
@@ -73,3 +58,20 @@ Faut'il réentrainer le modèle avec des inputs de l'utilisateur.
     - Date_pool_monnaie_
     - Date_typedecontenue si c’est du contenu bénin
 Uploader dans le drive et dans le gitlab
+
+## Auteurs and Remerciements
+
+### Auteurs
+- Albert Dulout
+
+- Marc Serre
+
+- Tianrun Zhang
+
+- Elias Bey
+
+### Remerciements
+
+- Francoise Sailhan
+- Sandrine Vaton
+- Santiago Ruano Rincón
