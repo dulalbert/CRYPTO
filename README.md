@@ -56,3 +56,6 @@ Faut'il réentrainer le modèle avec des inputs de l'utilisateur.
 - Francoise Sailhan
 - Sandrine Vaton
 - Santiago Ruano Rincón
+
+## Explication de comment on a généré le dataset
+
