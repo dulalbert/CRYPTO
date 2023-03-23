@@ -110,15 +110,17 @@ def run(name : str, time_sleep = 1, timeout = 20):
     enregistrement_cpu.join()
 
     print("finished sniffing data")
-    df = pd.read_csv(f'{name}_traffic.csv').pipe(prepare_sniffed_df)
+    df = pd.read_csv(f'{name}_traffic.csv')
+    df.pipe(prepare_sniffed_df)
     dtrain = xgb.DMatrix(df)
 
     bst = xgb.Booster({'nthread': 4})  # init model
     bst.load_model('model.bst')  # load data
-    result = pd.DataFrame(bst.predict(dtrain))
+    #cpu_result = pd.DataFrame()
+    network_result = pd.DataFrame(bst.predict(dtrain))
     #retirer après test
-    result.sort_values([0]).to_csv('result.csv')
-    if [result[result > 0.5].count() > result[result < 0.5].count()][0][0] :
+    network_result.sort_values([0]).to_csv('result.csv')
+    if [network_result[network_result > 0.5].count() > network_result[network_result < 0.5].count()][0][0] :
         if 'ToastNotifier' in locals():
             msg = "Attention du code de minage tourne sur votre ordinateur"
             notif = ToastNotifier()
