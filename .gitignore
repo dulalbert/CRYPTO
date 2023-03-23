@@ -1,3 +1,8 @@
+# csv generated
+result.csv
+test_Cpu.csv
+test_Traffic.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -116,7 +116,6 @@ def run(name : str, time_sleep = 1, timeout = 20):
 
     bst = xgb.Booster({'nthread': 4})  # init model
     bst.load_model('model.bst')  # load data
-    #cpu_result = pd.DataFrame()
     network_result = pd.DataFrame(bst.predict(dtrain))
     #retirer après test
     network_result.sort_values([0]).to_csv('result.csv')
