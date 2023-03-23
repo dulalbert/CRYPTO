@@ -1,4 +1,12 @@
 # cryptojacking
+
+# Description
+
+Ce projet permet de détécter la présence de malware de cryptojacking, une attaque de plus en plus fréquente sur des systèms peu protégés.
+
+Pour plus d'informations, veuillez-vous referez à POSTER RYPTOJACKING.pdf de ce repository.
+
+
 ## Installation
 
 Installer les dépendances :
@@ -8,7 +16,7 @@ pip install -r requirements.txt
 ```
 
 ## Comment utiliser
-Lancer le script run.py et attendre le résultat.
+Lancer le script run.py et attendre le résultat sans logiciel en arrière plan.
 
 Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le modèle :
 - Lancer du minage avec XMRig (optionel)
