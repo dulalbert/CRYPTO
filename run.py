@@ -5,6 +5,7 @@ import time
 from platform import platform as pf
 import pkg_resources
 from time import strftime
+import argparse
 
 from netifaces import interfaces
 from scapy.all import *
@@ -124,4 +125,8 @@ def run(name : str, time_sleep = 1, timeout = 20):
                     print("probable attaque de cryptojacking")
 
 if __name__ == '__main__':
-    run(f'network_sniff_{strftime("%Y%m%d-%H%M%S")}')
+    parser = argparse.ArgumentParser(description= 'Cette fonction lance l\'analyse de paquet et l\'analyse du cpu en parallèle.')
+    parser.add_argument('--time_sleep', '-S', type = int, help='duree de someil', default= 1)
+    parser.add_argument('--timeout', '-T', type = int,  help='timeout', default=20)
+    args = parser.parse_args()
+    run(f'network_sniff_{strftime("%Y%m%d-%H%M%S")}',args.time_sleep, args.timeout)
