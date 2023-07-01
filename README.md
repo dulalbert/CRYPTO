@@ -14,18 +14,20 @@ Installer les dépendances :
 ```
 pip install -r requirements.txt
 ```
-Sur Windows, on peut installer win10toast pour avoir une allerte plus esthétique.
+Sur Windows, on peut installer win10toast pour avoir une alerte plus esthétique.
 
 ## Comment utiliser
 
-Lancer le script run.py, le script tourne en boucle infinie.
+```
+python3 run.py --time_sleep 1 --timeout 20
+```
 
 Variable globale pouvant être changées :
 - WINDOW : la fenêtre surlaquelle on effectue les moyennes et écart-types mobiles
 - COUNT_SNIFF : le nombre de paquet sniffés sur lesquels on applique le XGBoost
 - CPU_AVERAGE_TIME : la durée sur laquelle étudie le pourcentage d'utilisation du CPU
 - CPU_ALERT_PERCENT : le pourcentage surprenant d'utilisation du CPU
-- NETWORK_ALERT_PERCENT : on compare le nombre de paquets ayant une probabilité supérieur à ce pourcentage et intférieue après le XGBoost et s'il y a une majorité de paquet ayant une probabilité supérieur, on allerte l'utilisateur.
+- NETWORK_ALERT_PERCENT : on compare le nombre de paquets ayant une probabilité supérieur à ce pourcentage et intférieue après le XGBoost et s'il y a une majorité de paquet ayant une probabilité supérieur, on alerte l'utilisateur.
 
 Pour rajouter des données dans le dataset d'entrainement et ré-entrainer le modèle :
 - Lancer du minage avec XMRig (optionel)
@@ -66,8 +68,8 @@ Faut il réentrainer le modèle avec des inputs de l'utilisateur.
 - Coller la ligne de commande de l’étape 6 dans le terminal et lancer le minage
 - Arrêter le minage + Wireshark
 - Enregistrer 2 fois : une en format pngcap et l’autre sous format csv avec comme nom :
-    - Date_pool_monnaie_
-    - Date_typedecontenue si c’est du contenu bénin
+    - Date_minage_pool_monnaie_
+    - Date_traffic_typedecontenue si c’est du contenu bénin
 Uploader dans le drive et dans le gitlab
 
 ## Auteurs and Remerciements
