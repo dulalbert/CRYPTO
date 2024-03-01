@@ -41,19 +41,19 @@ Le model a été entrainé à partir de donnée snifées par Wireshark
 
 - Rajouter des données dans le dataset => voir Interrogations
 - Essayer de créer un dataset avec plusieurs ordinateurs Windows avec Wireshark à utiliser en mode administrateur.
-- Réecrire analyse_cpu ou le remplacer
+- Réécrire analyse_cpu ou le remplacer
 
 # Interrogations
 
-Faut il réentrainer le modèle avec des inputs de l'utilisateur.
+Faut-il réentrainer le modèle avec des inputs de l'utilisateur.
 
 ## Avantages :
 - Le modèle s'améliorerait avec le temps donc moins en moins de faux positif.
 
-## Désaventages :
-- Les classes étaient équilibrés au début, est-ce que déséquilibrer les classes ne diminurait pas le résultat du XGBoost.
-- Les hyperparamètres ont été choisis par ggridsearch sur le dataset d'entrainement, faut il refaire un GridSearch à chaque entrainement?
-- Pas eu de cours sur la mise en production de modèle.
+## Désavantages :
+- Les classes étaient équilibrées au début, est-ce que déséquilibrer les classes ne diminuerait pas le résultat du XGBoost.
+- Les hyperparamètres ont été choisis par gridsearch sur le dataset d'entrainement, faut-il refaire un GridSearch à chaque entraînement ?
+- Pas eu de cours sur la mise en production de modèles.
 
 ## Génération du dataset
 
